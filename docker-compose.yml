@@ -2,19 +2,29 @@ version: '3'
 
 services:
 
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_DB: alpacaDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - backend
+
   web:
     build: .
-    command: python core/manage.py runserver 0.0.0.0:8000
+    command: /bin/bash -c "python core/manage.py makemigrations &&
+             python core/manage.py migrate &&
+             python core/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
       - postgres
+    networks:
+      - backend
 
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+networks:
+  backend:
