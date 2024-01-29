@@ -1,45 +1,58 @@
-import base64
-import requests
-import os
-
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Order
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer
 from dotenv import load_dotenv
 import logging
-from order_management.query_params import search_by_query_parameters
+import datetime
+from order_management import api_alpaca 
 
 
 load_dotenv()
 
 
-class CreateOrder(APIView):
-    def post(self, request):
-        serializer = OrderSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+class CreateOrder(generics.CreateAPIView):
+    serializer_class = OrderCreateSerializer
+    
+    def post(self, request, account_id, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        logging.info(f"{serializer.data=}")
+        logging.info(f"{serializer.errors=}")
+        response = api_alpaca.alpaca_api_create_order(account_id, data=serializer.data)
+        if response.get('code'):
+            error_message = response.get("message")
+            logging.info(f"{response=}")
+            return Response({"error": error_message}, status=status.HTTP_400_BAD_REQUEST)
+        logging.info(f"{response=}")
+        order_serializer = OrderSerializer(data=response)
+        if order_serializer.is_valid():
+            Order.objects.create(**order_serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
 
 class ListOrders(APIView):
     def get(self, request, account_id):
         # Получение данных
-        order_data = search_by_query_parameters(request=request, account_id=account_id)
+        order_data = api_alpaca.search_by_query_parameters(request=request, account_id=account_id)
+        serializer = OrderSerializer(data=order_data,many=True)
 
         if 'errors' in order_data:
             return Response(data={"code": 404, "message": f"{order_data['errors']}"},status=status.HTTP_404_NOT_FOUND)
             
-        serializer = OrderSerializer(data=order_data,many=True)
-        
         # Если нет этого заказа в бд то сохраняем
         if serializer.is_valid():
             for order_data in serializer.data:
                 order_id = order_data.get('id')
                 if not Order.objects.filter(id=order_id).exists():
                     order = Order.objects.create(**order_data)
+        times = datetime.datetime.strptime(str('2060-03-16T18:38:01.942282Z'), '%Y-%m-%dT%H:%M:%S.%fZ')
+        
+        logging.info(f"{order_data=}") 
+        logging.info(f"{times=}") 
+        logging.info(f'{times.strftime("%Y-%m-%dT%H:%M:%S.%fZ")}')      
+             
         return Response(serializer.data)
 
         
