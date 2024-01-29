@@ -25,19 +25,21 @@ class CreateOrder(APIView):
 
 
 class ListOrders(APIView):
-    def get(self, request, account_id,  *args, **kwargs):
-        # Сериализация и отправка ответа
+    def get(self, request, account_id):
+        # Получение данных
         order_data = search_by_query_parameters(request=request, account_id=account_id)
-        if isinstance(order_data, dict):
-            return Response(data={"code": 404, "message": "qty_above format invalid"},status=status.HTTP_404_NOT_FOUND)
+
+        if 'errors' in order_data:
+            return Response(data={"code": 404, "message": f"{order_data['errors']}"},status=status.HTTP_404_NOT_FOUND)
             
         serializer = OrderSerializer(data=order_data,many=True)
+        
         # Если нет этого заказа в бд то сохраняем
         if serializer.is_valid():
             for order_data in serializer.data:
                 order_id = order_data.get('id')
                 if not Order.objects.filter(id=order_id).exists():
-                    Order.objects.create(**order_data)
+                    order = Order.objects.create(**order_data)
         return Response(serializer.data)
 
         
