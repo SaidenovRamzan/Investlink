@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Order(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.CharField(primary_key=True)
     client_order_id = models.UUIDField()
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()

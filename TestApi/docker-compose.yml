@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_DB: alpacaDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6385:6379"
+    networks:
+      - backend
+
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A core worker -l INFO
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - backend
+      
+  web:
+    build: .
+    container_name: web
+    command: /bin/bash -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - celery
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  postgres_data:

@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def alpaca_api_get_list_orders(account_id:int, params:dict) -> dict:
-    """Get list from Alpaca api"""
+    """Get list from Alpaca API"""
 
     api_key = os.getenv('API_KEY')
     api_secret = os.getenv('API_SECRET')
@@ -19,9 +19,9 @@ def alpaca_api_get_list_orders(account_id:int, params:dict) -> dict:
     base64_credentials = base64.b64encode(credentials.encode()).decode()
     headers = {
         "accept": "application/json",
-        "authorization": f"Basic {base64_credentials}"
+        "authorization": f"Basic Q0s3NlFMWEZRUlFONEMxSzAxMTc6Qm1LdTZpT0t6V0lnQmhaaDhBYTRnVHlGdXhxYTFtMjZZZGtTTFA1eA=="
     }
-    data = requests.get(url, headers=headers, params=params, timeout=30)
+    data = requests.get(url, headers=headers, params=params)
     
     return data.json()
 
@@ -31,28 +31,15 @@ def search_by_query_parameters(request, account_id:str)-> dict:
     otherwise, returns a dictionary with errors"""
 
     response = {}
+    logging.info(f"{request.query_params=}==============================================")
     serializer = ListOrdersQueryParametersSerializer(data=request.query_params)
     
     if serializer.is_valid():
         query_params = {key:value for key, value in serializer.validated_data.items() if value}
-            # 'status': serializer.validated_data['status'],
-            # 'limit': serializer.validated_data['limit'],
-            # 'after': serializer.validated_data['after'],
-            # 'until': serializer.validated_data['until'],
-            # 'direction': serializer.validated_data['direction'],
-            # 'nested': serializer.validated_data['nested'],
-            # 'symbols': serializer.validated_data['symbols'],
-            # 'qty_above': str(serializer.validated_data['qty_above'])\
-            #                 if serializer.validated_data['qty_above']\
-            #                  else '-1',
-            # 'qty_below': str(serializer.validated_data['qty_below'])\
-            #                 if serializer.validated_data['qty_below']\
-            #                 else '100000000000000000000',
-        # }
-        if serializer.validated_data.get('subtag'):
-            query_params['subtag'] = serializer.validated_data['subtag']
-            
         response = alpaca_api_get_list_orders(account_id=account_id, params=query_params)
+        logging.info(f"{response=}40 in query after get=========================")
+        # if response.get('message') in"forbidden.":
+        #     response['errors'] = 'forbidden'
     else: 
         response['errors'] = {key:value for key, value in serializer.errors.items()}
         
