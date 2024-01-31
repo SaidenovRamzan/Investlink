@@ -65,7 +65,7 @@ class OrderCreateSerializer(serializers.Serializer):
     stop_price = serializers.CharField(required=False, allow_blank=True)
     trail_price = serializers.CharField(required=False, allow_blank=True)
     trail_percent = serializers.CharField(required=False, allow_blank=True)
-    extended_hours = serializers.ChoiceField(choices=[(item.value, item.value) for item in ExtendedHoursChoices], required=True)
+    extended_hours = serializers.ChoiceField(choices=[(item.value, item.value) for item in ExtendedHoursChoices])
     client_order_id = serializers.CharField(max_length=48, required=False, allow_blank=True)
     order_class = serializers.ChoiceField(choices=[(item.value, item.value) for item in OrderClassChoices], required=True)
     commission = serializers.CharField(required=False, allow_blank=True)
