@@ -117,5 +117,5 @@ class CancelOrderTestCase(APITestCase):
         order_id = 999
         account_id = 456
 
-        url = reverse('cancel-order', args=[account_id, order_id])
+        url = reverse('cancel_order', args=[account_id, order_id])
         response = self.client.delete(url)
