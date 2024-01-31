@@ -76,14 +76,16 @@ Swagger предоставляет интерактивную документа
 
 ```bash
 
-docker exec -it web /bin/bash python manage.py createsuperuser
+docker exec -it web /bin/bash 
+python manage.py createsuperuser
 ```
 
 Для установки тестовых данных заказов в базу данных, выполните следующую команду:
 
 ```bash
 
-docker exec -it web /bin/bash python manage.py get_all_orders
+docker exec -it web /bin/bash 
+python manage.py get_all_orders
 ```
 
 Эта команда загрузит тестовые данные заказов в вашу базу данных.
@@ -93,7 +95,17 @@ docker exec -it web /bin/bash python manage.py get_all_orders
 
 ```bash
 
-docker exec -it web /bin/bash python manage.py сhange_all_statuses
+docker exec -it web /bin/bash 
+python manage.py сhange_all_statuses
 ```
 
 Эта команда изменит статус всех заказов на "new", что позволит вам наблюдать обновление через SSE соединение.
+
+
+Чтобы накатить фикстуры ныжно пропичать
+
+```bash
+
+docker exec -it web /bin/bash 
+python manage.py loaddata fixtures/initial_data.json
+```
