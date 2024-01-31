@@ -40,6 +40,8 @@ services:
     command: /bin/bash -c "python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
+            #  get_all_orders
+            # сhange_all_statuses
     ports:
       - "8000:8000"
     depends_on:
@@ -48,9 +50,22 @@ services:
       - celery
     networks:
       - backend
+    volumes:
+    - .:/usr/src/app
+
+  sse-listener:
+    build: .
+    command: python manage.py run_sse_listener
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - web
+    networks:
+      - backend
 
 networks:
   backend:
 
 volumes:
   postgres_data:
+

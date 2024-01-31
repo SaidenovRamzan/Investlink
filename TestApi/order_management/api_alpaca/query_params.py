@@ -3,12 +3,12 @@ import requests
 import base64
 from dotenv import load_dotenv
 from order_management.serializers import ListOrdersQueryParametersSerializer
-import logging
+
 
 load_dotenv()
 
 
-def alpaca_api_get_list_orders(account_id:int, params:dict) -> dict:
+def alpaca_api_get_list_orders(account_id:str, params:dict) -> dict|list:
     """Get list from Alpaca API"""
 
     api_key = os.getenv('API_KEY')
@@ -31,15 +31,15 @@ def search_by_query_parameters(request, account_id:str)-> dict:
     otherwise, returns a dictionary with errors"""
 
     response = {}
-    logging.info(f"{request.query_params=}==============================================")
     serializer = ListOrdersQueryParametersSerializer(data=request.query_params)
-    
+
     if serializer.is_valid():
-        query_params = {key:value for key, value in serializer.validated_data.items() if value}
+        query_params = {key:str(value) for key, value in serializer.validated_data.items() if value}
         response = alpaca_api_get_list_orders(account_id=account_id, params=query_params)
-        logging.info(f"{response=}40 in query after get=========================")
-        # if response.get('message') in"forbidden.":
-        #     response['errors'] = 'forbidden'
+        
+        if isinstance(response, dict):
+            response['errors'] = response['message']
+            
     else: 
         response['errors'] = {key:value for key, value in serializer.errors.items()}
         

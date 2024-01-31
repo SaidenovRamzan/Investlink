@@ -1,11 +1,11 @@
+from dotenv import load_dotenv
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from order_management.models import Order
 from order_management.serializers import OrderSerializer, OrderCreateSerializer
-from dotenv import load_dotenv
 import logging
-from order_management import api_alpaca, tasks 
+from order_management import api_alpaca
 
 
 load_dotenv()
@@ -35,38 +35,31 @@ class CreateOrder(generics.CreateAPIView):
 
 class ListOrders(APIView):
     def get(self, request, account_id):
-        logging.info(f"===================================================================================")
-        tasks.listen_sse_events.delay()
-        logging.info(f"=============TASK WORK======================================================================")
-        
-        # Получение данных
         order_data = api_alpaca.search_by_query_parameters(request=request, account_id=account_id)
-        logging.info(f'{order_data=} in view 42')
+        serializer = OrderSerializer(data=order_data, many=True)
         
-        serializer = OrderSerializer(data=order_data,many=True)
         if 'errors' in order_data:
             return Response(data={"code": 404, "message": f"{order_data['errors']}"},status=status.HTTP_404_NOT_FOUND)
+        
         serializer.is_valid()
-        # Если нет этого заказа в бд то сохраняемss
-        if serializer.is_valid():
-            for order_data in serializer.data:
-                order_id = order_data.get('id')
-                
-                if not Order.objects.filter(id=order_id).exists():
-                    Order.objects.create(**order_data)
-        logging.info(serializer)
         return Response(serializer.data)
 
         
 class CancelOrder(APIView):
-    def delete(self, request, order_id):
+    def delete(self, request, account_id, order_id):
+        response = api_alpaca.alpaca_api_delete_order(
+                    order_id=order_id,
+                    account_id=account_id
+        )
+        logging.info(f"{response=}")
+        if 204 not in response:
+            return Response(data={"code": 404, "message": f"{response[1].decode()}"},status=status.HTTP_404_NOT_FOUND)
         
         try:
             order = Order.objects.get(id=order_id)
-            
+            order.delete()
         except Order.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        order.delete()
+            pass
+
         return Response(status=status.HTTP_204_NO_CONTENT)
     
