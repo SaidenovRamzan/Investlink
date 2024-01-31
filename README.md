@@ -51,9 +51,10 @@ Swagger предоставляет интерактивную документа
 ```bash
 
 docker-compose exec -it web python manage.py get_all_orders
+```
 
 Эта команда загрузит тестовые данные заказов в вашу базу данных.
-```
+
 
 Чтобы изменить статус всех заказов на "new" и проверить обновление через SSE соединение, выполните:
 
@@ -61,8 +62,9 @@ docker-compose exec -it web python manage.py get_all_orders
 
 docker-compose exec -it web python manage.py сhange_all_statuses
 
-Эта команда изменит статус всех заказов на "new", что позволит вам наблюдать обновление через SSE соединение.
 ```
+
+Эта команда изменит статус всех заказов на "new", что позволит вам наблюдать обновление через SSE соединение.
 
 
 
