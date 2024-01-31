@@ -19,7 +19,7 @@ def alpaca_api_get_list_orders(account_id:str, params:dict) -> dict|list:
     base64_credentials = base64.b64encode(credentials.encode()).decode()
     headers = {
         "accept": "application/json",
-        "authorization": f"Basic Q0s3NlFMWEZRUlFONEMxSzAxMTc6Qm1LdTZpT0t6V0lnQmhaaDhBYTRnVHlGdXhxYTFtMjZZZGtTTFA1eA=="
+        "authorization": f"Basic {base64_credentials}"
     }
     data = requests.get(url, headers=headers, params=params)
     

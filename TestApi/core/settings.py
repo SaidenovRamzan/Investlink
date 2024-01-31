@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import logging
 
 
 load_dotenv()
@@ -44,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-
+    'drf_yasg',
+    
     'order_management',
 ]
 
@@ -85,11 +87,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'alpacaDB', #os.getenv('DB_NAME'),
-        'USER': 'postgres',#os.getenv('DB_USER'),
-        'PASSWORD': 'postgres',#os.getenv('DB_PASSWORD'),
-        'HOST': 'postgres',#os.getenv('DB_HOST'),
-        'PORT': '5432',#os.getenv('DB_PORT'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -136,8 +138,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Настройки Celery
-CELERY_BROKER_URL = 'redis://redis:6379/0'  
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0' 
+CELERY_BROKER_URL = f'redis://{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}/0'  
+CELERY_RESULT_BACKEND = f'redis://{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}/0' 
 
 # Путь к файлу tasks.py
 CELERY_IMPORTS = ('order_management.tasks',)

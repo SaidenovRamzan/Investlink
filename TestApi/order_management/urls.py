@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from order_management import views
 
 
 urlpatterns = [

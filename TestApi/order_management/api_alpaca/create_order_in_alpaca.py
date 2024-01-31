@@ -1,12 +1,10 @@
 import requests
-from order_management.serializers import OrderCreateSerializer
-import logging
+
 
 def alpaca_api_create_order(account_id:int, data):
     url = f"https://broker-api.sandbox.alpaca.markets/v1/trading/accounts/{account_id}/orders"
 
     payload = {key : value for key, value in data.items() if value}
-    logging.info(f'{payload}')
     headers = {
         "accept": "application/json",
         "content-type": "application/json",

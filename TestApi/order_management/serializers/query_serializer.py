@@ -13,7 +13,7 @@ class DeleteQueryParametersSerializer(serializers.Serializer):
             except ValueError:
                 raise serializers.ValidationError("qty must be a valid number")
             
-            if not 0 <= float_value <= 1000000000:  # Adjust the upper bound as needed
+            if not 0 <= float_value <= 1000000000:  
                 raise serializers.ValidationError("qty must be between 0 and 1000000000")
             
             if len(value.split('.')[-1]) > 9:

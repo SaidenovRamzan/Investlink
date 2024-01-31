@@ -2,7 +2,7 @@ import os
 import requests
 import base64
 from dotenv import load_dotenv
-import logging
+
 
 load_dotenv()
 
@@ -18,7 +18,7 @@ def alpaca_api_delete_order(account_id:str, order_id:str) -> None:
     base64_credentials = base64.b64encode(credentials.encode()).decode()
     headers = {
         "accept": "application/json",
-        "authorization": f"Basic Q0s3NlFMWEZRUlFONEMxSzAxMTc6Qm1LdTZpT0t6V0lnQmhaaDhBYTRnVHlGdXhxYTFtMjZZZGtTTFA1eA=="
+        "authorization": f"Basic {base64_credentials}"
     }
     data = requests.delete(url, headers=headers)
     

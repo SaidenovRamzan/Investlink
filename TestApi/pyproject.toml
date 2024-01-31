@@ -14,6 +14,7 @@ python-dotenv = "^1.0.1"
 celery = "^5.3.6"
 redis = "^5.0.1"
 sseclient = "^0.0.27"
+drf-yasg = "^1.21.7"
 
 
 [tool.poetry.group.dev.dependencies]
