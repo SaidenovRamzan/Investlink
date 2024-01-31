@@ -40,8 +40,6 @@ services:
     command: /bin/bash -c "python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
-            #  get_all_orders
-            # сhange_all_statuses
     ports:
       - "8000:8000"
     depends_on:
