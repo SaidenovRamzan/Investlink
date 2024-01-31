@@ -31,6 +31,31 @@ Investlink TestApi - это приложение, которое являетс�
 cd путь_к_каталогу_где_Dockerfile 
 ```
 
+Создайте фаил .env на уровне manage.py
+
+```bash
+touch .env
+```
+
+Заполните данными  .env
+
+```bash
+API_KEY=CK76QLXFQRQN4C1K0117
+API_SECRET=BmKu6iOKzWIgBhZh8Aa4gTyFuxqa1m26YdkSLP5x
+Broker_id=5e62581b-1a60-4f8d-a950-4efa12d15be7
+
+#DB config
+DB_NAME='alpacaDB'
+DB_USER='postgres'
+DB_PASSWORD='postgres'
+DB_HOST='postgres'
+DB_PORT='5432'
+
+#Redis
+REDIS_PORT='6379'
+REDIS_HOST='redis'
+```
+
 Запустите сборку образов Docker и запустите контейнеры в фоновом режиме с помощью следующих команд:
 
 ```bash
@@ -73,6 +98,3 @@ docker exec -it web /bin/bash python manage.py сhange_all_statuses
 ```
 
 Эта команда изменит статус всех заказов на "new", что позволит вам наблюдать обновление через SSE соединение.
-
-
-

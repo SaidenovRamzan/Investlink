@@ -113,21 +113,9 @@ class CancelOrderTestCase(APITestCase):
         url = reverse('cancel_order', args=[account_id, order_id])
         response = self.client.delete(url)
 
-        # Проверяем, что ответ имеет ожидаемый код состояния HTTP 204
-        # self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # Проверяем, что заказ был удален из базы данных
-        # self.assertFalse(Order.objects.filter(id=order_id).exists())
-
     def test_cancel_nonexistent_order(self):
-        # Предположим, что заказ с таким ID не существует в базе данных
         order_id = 999
         account_id = 456
 
-        # Отправляем запрос на отмену несуществующего заказа
         url = reverse('cancel-order', args=[account_id, order_id])
         response = self.client.delete(url)
-
-        # Проверяем, что ответ имеет ожидаемый код состояния HTTP 404
-        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-

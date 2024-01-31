@@ -36,5 +36,3 @@ def listen_sse_events():
     for msg in messages:
         if msg.event == 'message':
             update_values.delay(msg.data)
-
-
