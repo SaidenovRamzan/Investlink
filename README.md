@@ -39,9 +39,9 @@ touch .env
 Заполните данными  .env
 
 ```bash
-API_KEY=CK76QLXFQRQN4C1K0117
-API_SECRET=BmKu6iOKzWIgBhZh8Aa4gTyFuxqa1m26YdkSLP5x
-Broker_id=5e62581b-1a60-4f8d-a950-4efa12d15be7
+API_KEY=
+API_SECRET=
+Broker_id=
 
 #DB config
 DB_NAME='alpacaDB'
